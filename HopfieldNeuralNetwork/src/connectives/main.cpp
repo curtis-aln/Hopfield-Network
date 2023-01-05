@@ -11,11 +11,6 @@ TODO, prep for v2.0
 
 - button texts arn't aligned
 - replace weights with synapses
-
-
-t1 = 23 seconds
-t2 = 
-t3 = 
 */
 
 
@@ -64,12 +59,11 @@ void init_buttons(float minY, float spacing, sf::Vector2f buttonSize, Simulation
 
 
 int main() {
-
 	// constants
 	constexpr unsigned int screenWidth = 1366;
 	constexpr unsigned int screenHeight = 768;
-	constexpr unsigned int FPS_Limit = 60;
-	constexpr bool b_vSync = false;
+	constexpr unsigned int FPS_Limit = 99999;  // max 99999
+	constexpr bool b_vSync = false; // shold fps lock with current monitor refresh rate ? false(off) / true(on)
 	constexpr unsigned int SynapsesShown = 1; // how many synapses are shown (eveny Nth synapse)
 
 	constexpr float bufferX = 70;
@@ -135,15 +129,15 @@ int main() {
 	// main game loop
 	while (window.isOpen()) {
 
-		const float currentTime = clock.restart().asSeconds();
+		const float currentTime = clock.restart().asSeconds(); // counter for each frame with the time stamp
 		const float fps = 1.0f / (currentTime);
 
-		if (fps_display_clock.getElapsedTime().asSeconds() >= 0.1f) //100ms
+		if (fps_display_clock.getElapsedTime().asMilliseconds() >= 100) //100ms fps info display rate
 		{
 			statistics.FindObject("both")->updateStatistic(std::to_string(fps), 0);
 			fps_display_clock.restart();
-		}
-
+		} 
+	
 		// events
 		sf::Event event;
 		sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
@@ -180,5 +174,5 @@ int main() {
 		window.display();
 
 	}
-	return 0;
+	return 0; // 
 }
