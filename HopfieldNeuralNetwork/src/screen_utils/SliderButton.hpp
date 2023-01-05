@@ -98,7 +98,7 @@ public:
         target.draw(m_dot);
 
         sf::Vector2f pos = m_dot.getPosition();
-        setValueText(floatToString(getValue()), {pos.x+3, pos.y + 3});
+        setValueText(std::to_string(getValue()), {pos.x+3, pos.y + 3});
         target.draw(text);
     }
 

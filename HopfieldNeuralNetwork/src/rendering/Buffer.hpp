@@ -9,40 +9,43 @@ public:
 	std::vector<unsigned int> m_circleIndexes{};
 
 public:
-	Circle(std::vector<unsigned int> circleIndexes) {
+	Circle(const std::vector<unsigned int>& circleIndexes) {
 		m_circleIndexes = circleIndexes;
 	}
 
-	void move(sf::VertexArray& circles, float deltaX, float deltaY) {
-		for (unsigned int& index : m_circleIndexes) {
+	void move(sf::VertexArray& circles, float deltaX, float deltaY) const
+    {
+		for (const unsigned int& index : m_circleIndexes) {
 			circles[index].position.x += deltaX;
 			circles[index].position.y += deltaY;
 		}
 	}
 
-	sf::Vector2f getCenter(sf::VertexArray& circles) {
+	sf::Vector2f getCenter(const sf::VertexArray& circles) const
+    {
 		float sumsX = 0;
 		float sumsY = 0;
 		float count = 0;
-		for (unsigned int& index : m_circleIndexes) {
+		for (const unsigned int& index : m_circleIndexes) {
 			sumsX += circles[index].position.x;
 			sumsY += circles[index].position.y;
 			count++;
 		}
 
-		return sf::Vector2f(sumsX / count, sumsY / count);
+		return {sumsX / count, sumsY / count};
 	}
 
-	void setPosition(sf::VertexArray& circles, float positionX, float positionY) {
-		sf::Vector2f centerPos = getCenter(circles);
-		float deltaX = positionX - centerPos.x;
-		float deltaY = positionY - centerPos.y;
+	void setPosition(sf::VertexArray& circles, float positionX, float positionY) const
+    {
+		const sf::Vector2f centerPos = getCenter(circles);
+		const float deltaX = positionX - centerPos.x;
+		const float deltaY = positionY - centerPos.y;
 
 		move(circles, deltaX, deltaY);
 	}
 
-	void setColor(sf::VertexArray& circles, sf::Color color) {
-		for (unsigned int& index : m_circleIndexes) {
+	void setColor(sf::VertexArray& circles, const sf::Color& color) {
+		for (const unsigned int& index : m_circleIndexes) {
 			circles[index].color = color;
 		}
 	}
@@ -51,8 +54,8 @@ public:
 
 class ArrayOfCircles {
 public:
-	std::vector<Circle> m_circles{};
-	sf::VertexArray m_circleArray{};
+	std::vector<Circle> m_circles;
+	sf::VertexArray m_circleArray;
 
 	int pointsPerCircle{};
 	float m_size = 10.0f;
@@ -74,17 +77,18 @@ public: // constructor and public functions
 		if (circleCount == 0) return;
 
 		// initilising the Circles 
-		std::cout << "[ArrayOfCircles]: createCircleTriangles" << "\n";
+		puts("[ArrayOfCircles]: createCircleTriangles");
 		std::vector<std::vector<sf::Vector2f>> PointsForCircles = createCircleTriangles();
 
-		std::cout << "[ArrayOfCircles]: flattenAndConvertToVertexArray" << "\n";
+		puts("[ArrayOfCircles]: flattenAndConvertToVertexArray");
 		m_circleArray = flattenAndConvertToVertexArray(PointsForCircles);
 
-		std::cout << "[ArrayOfCircles]: convertVertexArrayToCircles" << "\n";
+		puts("[ArrayOfCircles]: convertVertexArrayToCircles");
 		m_circles = convertVertexArrayToCircles(m_circleArray);
 	}
 
-	void drawCircles(sf::RenderWindow& window, sf::Vector2f center) {
+	void drawCircles(sf::RenderWindow& window, const sf::Vector2f& center) const
+    {
 		window.draw(m_circleArray);
 	}
 
@@ -121,15 +125,17 @@ private: // private functions
 	}
 
 	
-	sf::Vector2f idxToCoords(int idx) {
-		float pi = 3.141592f;
-		float x = cos(2 * pi / m_circlePoints * idx) * m_circleRadius;
-		float y = sin(2 * pi / m_circlePoints * idx) * m_circleRadius;
-		return sf::Vector2f(x, y);
+	sf::Vector2f idxToCoords(int idx) const
+    {
+		constexpr float pi = 3.141592f;
+		const float x = cos(2 * pi / m_circlePoints * idx) * m_circleRadius;
+		const float y = sin(2 * pi / m_circlePoints * idx) * m_circleRadius;
+		return {x, y};
 	}
 
 	
-	std::vector<Circle> convertVertexArrayToCircles(sf::VertexArray& vertexArray) {
+	std::vector<Circle> convertVertexArrayToCircles(const sf::VertexArray& vertexArray) const
+    {
 		std::vector<Circle> circles;
 
 		for (int i = 0; i < vertexArray.getVertexCount(); i+= pointsPerCircle) {
@@ -150,7 +156,7 @@ private: // private functions
 
 		int i = 0;
 		for (std::vector<sf::Vector2f>& circle : trianglePoints) {
-			for (sf::Vector2f& point : circle) {
+			for (const sf::Vector2f& point : circle) {
 				vertexArray[i].position = point;
 				i++;
 			}

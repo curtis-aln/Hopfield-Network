@@ -15,11 +15,10 @@
 #include "../../other_utils/ObjectManager.hpp"
 
 
-
 class Simulation {
 public:
-	const unsigned int p_neuronsPerAxies = 150;
-	const unsigned int p_neuronAmount = p_neuronsPerAxies * p_neuronsPerAxies;
+	inline static constexpr unsigned int p_neuronsPerAxies = 150;
+	inline static constexpr unsigned int p_neuronAmount = p_neuronsPerAxies * p_neuronsPerAxies;
 
 
 private: // variables
@@ -29,36 +28,36 @@ private: // variables
 	bool m_mouseCurrentlyPressed = false;
 
 	// constants :]
-	const unsigned int m_neuronShapeSides = 5;
-	const unsigned int m_button_char_size = 20;
-	const float m_neuronRadius = 2.0f;
+	inline static constexpr unsigned int m_neuronShapeSides = 5;
+	inline static constexpr unsigned int m_button_char_size = 20;
+	inline static constexpr float m_neuronRadius = 2.0f;
 
 	// colors
-	const sf::Color m_neuronColorNegative{ 0, 0, 0 };
-	const sf::Color m_neuronColorPositive{ 205, 205, 255 };
-	const sf::Color m_buttonColorOff{ 30, 30, 30 };
-	const sf::Color m_buttonColorOn{ 20, 100, 122 };
+	inline static const sf::Color m_neuronColorNegative{ 0, 0, 0 };
+	inline static const sf::Color m_neuronColorPositive{ 205, 205, 255 };
+	inline static const sf::Color m_buttonColorOff{ 30, 30, 30 };
+	inline static const sf::Color m_buttonColorOn{ 20, 100, 122 };
 
 	// borders
-	Rect m_neuralNetworkBorder{};
-	Rect m_memoryMakerBorder{};
-	Rect m_memoryManagerBorder{};
+	Rect m_neuralNetworkBorder;
+	Rect m_memoryMakerBorder;
+	Rect m_memoryManagerBorder;
 
 	// containers
 	ObjectManager< ObjectManager<Button> > m_buttons;
-	std::vector<Neuron> m_neurons{};
+	std::vector<Neuron> m_neurons;
 	
 
 	// custom classes
-	ArrayOfCircles m_buffer{};
-	NeuralNetwork m_neuralNetwork{};
-	Renderer m_renderer{};
-	MemoryMaker m_memoryMaker{};
-	MemoryManager m_memoryManager{};
+	ArrayOfCircles m_buffer;
+	NeuralNetwork m_neuralNetwork;
+	Renderer m_renderer;
+	MemoryMaker m_memoryMaker;
+	MemoryManager m_memoryManager;
 
 	// other stuff
-	sf::Font m_font{};
-	sf::Vector2i m_mousePosition{};
+	sf::Font m_font;
+	sf::Vector2i m_mousePosition;
 
 
 private: // functions private
@@ -76,8 +75,8 @@ private: // functions private
 	// wrapper function
 	bool checkMemoryClick(sf::Vector2i mousePosition, bool clicked, bool drawMode, bool drawSize);
 
-	void update_weights(int num_neurons, double* outputs, double** weights, double learning_rate);
-	std::vector<double> storkey_learning_rule(std::vector<double> weights, std::vector<double> inputs, double error, double learning_rate);
+	void update_weights(int num_neurons, const double* outputs, double** weights, double learning_rate);
+	std::vector<double> storkey_learning_rule(const std::vector<double>& weights, const std::vector<double>& inputs, const double& error, const double& learning_rate);
 
 	// events
 	bool handleCloseEvent(sf::RenderWindow& window, const sf::Event& event);
@@ -91,7 +90,7 @@ private: // functions private
 public: // functions public
 	Simulation();
 
-	void initNeuronInfo(Rect neuralNetworkBorder, Rect memoryMakerBorder, Rect memoryManagerBorder);
+	void initNeuronInfo(const Rect& neuralNetworkBorder, const Rect& memoryMakerBorder, const Rect& memoryManagerBorder);
 
 	void memoryMakerClickCheck();
 
@@ -99,8 +98,8 @@ public: // functions public
 	void eventCheck(sf::Event& event, sf::RenderWindow& window, sf::Vector2i mousePosition);
 
 	// button stuff
-	void addButton(std::string text, Rect rect, std::string addToList, bool isToggleButton);
-	Button* getButton(std::string buttonList, std::string buttonName);
+	void addButton(const std::string& text, const Rect& rect, const std::string& addToList, bool isToggleButton);
+	Button* getButton(const std::string& buttonList, const std::string& buttonName);
 
 	void updateAndRender(sf::RenderWindow& window);
 };

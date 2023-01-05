@@ -52,9 +52,9 @@ public:
 		m_border = border;
 
 		// creating the neurons array
-		std::cout << "initilising neuron wrappers . . ." << "\n";
+		puts("initilising neuron wrappers . . .");
 		initNeurons(border.x + neuronRadius, border.y + neuronRadius, neuronRadius, circles, neurons);
-		std::cout << "neuron wrappers initilised." << "\n";
+		puts("neuron wrappers initilised.");
 
 	}
 
@@ -93,7 +93,7 @@ private:
 			}
 		}
 
-		std::cout << "[initNeurons()] -> neuronWrapper objects initilised" << "\n";
+		puts("[initNeurons()] -> neuronWrapper objects initilised");
 
 	}
 };

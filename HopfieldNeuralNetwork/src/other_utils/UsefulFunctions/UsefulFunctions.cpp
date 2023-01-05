@@ -1,16 +1,32 @@
 
 #include "UsefulFunctions.hpp"
 
+#include <iostream>
+#include <vector>
+#include <random>
+#include <numeric>
+#include <algorithm>
+
+#include <SFML/Graphics.hpp>
+
+
 // random
-int randint(int start, int end) {
-	return (int)rand() % ((end + 1) - start) + start;
+unsigned int randint(const unsigned int& start, const unsigned int& end) {
+	std::random_device dev;
+	std::mt19937 rng(dev());
+	std::uniform_int_distribution dist6(start, end); // distribution in range [1, 6]
+
+	return dist6(rng);
 }
 
 
-float randfloat(float start, float end) {
-	return (float(rand()) / float((RAND_MAX)) * (end - start)) + start;
-}
+float randfloat(const float& start, const float& end) {
+	std::random_device dev;
+	std::mt19937 rng(dev());
+	std::uniform_real_distribution dist6(start, end); // distribution in range [1, 6]
 
+	return dist6(rng);
+}
 
 template <typename T>
 T randChoice(const std::vector<T>& v) {
@@ -23,29 +39,22 @@ T randChoice(const std::vector<T>& v) {
 
 
 // dot product
-float dotProduct(std::vector<float> arr1, std::vector<float> arr2) {
+float dotProduct(const std::vector<float>& arr1, const std::vector<float>& arr2) {
 	// gets the dot product (float) of two arrays
 	return std::transform_reduce(arr1.begin(), arr1.end(), arr2.begin(), 0);
 }
 
 // printing
 template <typename T>
-void print(const T& x) {
-	std::cout << x << std::endl;
-}
-
-
-template <typename T>
 void printArr(const std::vector<T>& vec) {
-	std::cout << "[";
-	for (size_t i = 0; i < vec.size(); ++i) {
-		const T& element = vec[i];
-		print(element);
-		if (i < vec.size() - 1) {
-			std::cout << ", ";
+	puts("[");
+	for (const auto& i : vec) {
+		puts(i);
+		if (vec.size() - 1) {
+			printf(", ");
 		}
 	}
-	std::cout << "]" << std::endl;
+	puts("]");
 }
 
 // vector
@@ -55,18 +64,3 @@ void remove_from_vector(std::vector<T>& vec, const T& element) {
 	vec.resize(std::distance(vec.begin(), new_end));
 }
 
-// other
-std::string floatToString(double num) {
-	std::ostringstream oss;
-	oss << "" << num << "";
-	return oss.str();
-}
-
-std::string calcFPS(sf::Clock& clock) {
-	// FPS management
-	sf::Int64 timePerFrame = clock.restart().asMicroseconds();
-
-	std::ostringstream oss;
-	oss << timePerFrame;
-	return oss.str();
-}

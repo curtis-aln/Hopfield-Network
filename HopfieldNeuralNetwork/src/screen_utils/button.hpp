@@ -6,7 +6,6 @@
 #include "../neuron_utils/Neuron.hpp"
 
 #include <string>
-#include <array>
 
 
 struct ButtonTimer {
@@ -34,13 +33,13 @@ struct ButtonTimer {
 
 
 class Button {
-	Rect m_rectRenderOff{};
-	Rect m_rectRenderOn{};
-	ButtonTimer m_buttonTimer{};
-	sf::Text m_renderText{};
-	std::string m_strText{};
+	Rect m_rectRenderOff;
+	Rect m_rectRenderOn;
+	ButtonTimer m_buttonTimer;
+	sf::Text m_renderText;
+	std::string m_strText;
 
-	bool m_toggleButton{};
+	bool m_toggleButton;
 	bool m_clicked = false;
 	
 
@@ -51,7 +50,7 @@ private:
 
 
 public:
-	void init(Rect rect, sf::Color colorOff, sf::Color colorOn, sf::Text& text, std::string text_content, bool toggleButton = true) {
+	void init(const Rect& rect, const sf::Color& colorOff, const sf::Color& colorOn, const sf::Text& text, const std::string& text_content, bool toggleButton = true) {
 		m_toggleButton = toggleButton;
 		m_strText = text_content;
 		m_renderText = text;
@@ -86,11 +85,12 @@ public:
 		m_clicked = clicked;
 	}
 
-	bool getClicked() {
+	bool getClicked() const
+    {
 		return m_clicked;
 	}
 
-	std::string getStrText() {
+	const std::string& getStrText() const {
 		return m_strText;
 	}
 
@@ -108,9 +108,9 @@ public:
 		window.draw(m_renderText);
 	}
 
-	static sf::Text createText(sf::Font& font, std::string name, int size, std::string fileLocation) {
+	static sf::Text createText(sf::Font& font, const std::string& name, int size, const std::string& fileLocation) {
 		if (!font.loadFromFile(fileLocation)) {
-			std::cout << "[ERROR]: failed to load font" << "\n";
+			puts("[ERROR]: failed to load font");
 		}
 		sf::Text text(name, font, size);
 

@@ -19,7 +19,7 @@ public:
     virtual ~ObjectManager() {}
 
     // Add an object to the manager
-    void AddObject(const std::string& name, T object) {
+    void AddObject(const std::string& name, const T& object) {
         objects_[ToLower(name)] = object;
     }
 
@@ -50,7 +50,7 @@ private:
     std::map<std::string, T> objects_;
 
     // Convert a string to lowercase
-    std::string ToLower(const std::string& str) {
+    std::string ToLower(const std::string& str) const {
         // Create a lowercase string by transforming each character in the input string
         std::string lowercaseStr;
         lowercaseStr.resize(str.size());

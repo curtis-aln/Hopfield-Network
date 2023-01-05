@@ -7,8 +7,7 @@ void Simulation::addMemory() {
 	if (m_memoryManager.canAddMemory() == false)
 		return;
 
-	Memory memory = m_memoryMaker.getMemory();
-	m_memoryManager.addMemory(memory);
+	m_memoryManager.addMemory( m_memoryMaker.getMemory() );
 }
 
 
@@ -19,10 +18,10 @@ void Simulation::loadMemory() {
 		return;
 
 	// now we convert them into weights
-	std::vector<Weights> allWeights = m_neuralNetwork.turnMemoriesToWeights(memories);
+    const std::vector<Weights> allWeights = m_neuralNetwork.turnMemoriesToWeights(memories);
 	
 	// then we merge the memories
-	std::vector<std::vector<float>> weights = m_neuralNetwork.mergeWeights(allWeights).weightsAsVector;
+    const std::vector<std::vector<float>> weights = m_neuralNetwork.mergeWeights(allWeights).weightsAsVector;
 
 	// now we feed it into the neural network
 	m_neuralNetwork.hardSetWeights(weights);
@@ -30,7 +29,7 @@ void Simulation::loadMemory() {
 
 
 // button stuff
-void Simulation::addButton(std::string text, Rect rect, std::string addToList, bool isToggleButton) {
+void Simulation::addButton(const std::string& text, const Rect& rect, const std::string& addToList, bool isToggleButton) {
 	sf::Text sf_text = Button::createText(m_font, text, 20, "media/Calibri.ttf");
 	Button button;
 	button.init(rect, m_buttonColorOff, m_buttonColorOn, sf_text, text, isToggleButton);
@@ -38,7 +37,7 @@ void Simulation::addButton(std::string text, Rect rect, std::string addToList, b
 }
 
 
-Button* Simulation::getButton(std::string buttonList, std::string buttonName) {
+Button* Simulation::getButton(const std::string& buttonList, const std::string& buttonName) {
 	return m_buttons.FindObject(buttonList)->FindObject(buttonName);
 }
 
@@ -81,23 +80,24 @@ void Simulation::updateAndRender(sf::RenderWindow& window) {
 
 
 // Function to update the connection weights in a Hopfield network using the Hebbian learning rule
-void Simulation::update_weights(int num_neurons, double* outputs, double** weights, double learning_rate) {
+void Simulation::update_weights(int num_neurons, const double* outputs, double** weights, double learning_rate) {
 	// Loop through all pairs of neurons
 	for (int i = 0; i < num_neurons; i++) {
 		for (int j = 0; j < num_neurons; j++) {
 			// Calculate the change in the connection weight between neurons i and j using the Hebbian learning rule
-			double delta_weight = learning_rate * outputs[i] * outputs[j];
+            const double delta_weight = learning_rate * outputs[i] * outputs[j];
 			// Update the connection weight
 			weights[i][j] += delta_weight;
 		}
 	}
 }
 
-std::vector<double> Simulation::storkey_learning_rule(std::vector<double> weights, std::vector<double> inputs, double error, double learning_rate) {
+std::vector<double> Simulation::storkey_learning_rule(const std::vector<double>& weights, const std::vector<double>& inputs, const double& error, const double& learning_rate) {
 	std::vector<double> updated_weights;
-	for (int i = 0; i < weights.size(); i++) {
-		double weight_update = learning_rate * error * inputs[i];
-		updated_weights.push_back(weights[i] + weight_update);
+	for (const auto& i : weights)
+	{
+        const double weight_update = learning_rate * error * i;
+		updated_weights.emplace_back(i + weight_update);
 	}
 	return updated_weights;
 }

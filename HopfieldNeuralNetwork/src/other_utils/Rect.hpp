@@ -14,9 +14,9 @@ public: // variables
 
 public:
 	// constructor
-	Rect(float _x = 0, float _y = 0, float _w = 0, float _h = 0, 
-		sf::Color rectFillColor = { 0, 0, 0, 0 }, sf::Color rectOutlineColor = { 0, 0, 0, 0 },
-		float rectOutlineWidth = 0) {
+	Rect(const float _x = 0, const float _y = 0, const float _w = 0, const float _h = 0, 
+		const sf::Color rectFillColor = { 0, 0, 0, 0 }, const sf::Color rectOutlineColor = { 0, 0, 0, 0 },
+		const float rectOutlineWidth = 0) {
 		
 		x = _x;
 		y = _y;
@@ -32,13 +32,14 @@ public:
 	}
 
 	// other
-	bool checkRectCollision(sf::Vector2i position) {
+	bool checkRectCollision(const sf::Vector2i& position) const
+    {
 		if (!(x < position.x) || !(position.x < x + w) || !(y < position.y) || !(position.y < y + h))
 			return false;
 		return true;
 	}
 
-	void setPositionWithRect(Rect rect) {
+	void setPositionWithRect(const Rect& rect) {
 		x = rect.x;
 		y = rect.y;
 		w = rect.w;
@@ -46,33 +47,33 @@ public:
 	}
 
 	// convinient functions
-	sf::Vector2f getPosition() {
+	sf::Vector2f getPosition() const {
 		return { x, y };
 	}
 	
-	sf::Vector2f getSize() {
+	sf::Vector2f getSize() const {
 		return { w, h };
 	}
 
 	// corners
-	sf::Vector2f TopLeft() {
+	sf::Vector2f TopLeft() const {
 		return { x, y };
 	}
 
-	sf::Vector2f BottomLeft() {
+	sf::Vector2f BottomLeft() const {
 		return { x, y + h };
 	}
 
-	sf::Vector2f TopRight() {
+	sf::Vector2f TopRight() const {
 		return { x + w, y };
 	}
 
-	sf::Vector2f BottomRight() {
+	sf::Vector2f BottomRight() const {
 		return { x + w, y + h };
 	}
 	
 	// renderFunctions
-	void draw(sf::RenderWindow& window) {
+	void draw(sf::RenderWindow& window) const {
 		window.draw(renderRect);
 	}
 };

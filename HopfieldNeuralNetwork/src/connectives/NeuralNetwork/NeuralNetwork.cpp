@@ -2,21 +2,21 @@
 
 
 // Optimized function for converting a memory vector to a weights matrix
-Weights NeuralNetwork::convertMemoryToWeights(std::vector<float>& memory) {
+Weights NeuralNetwork::convertMemoryToWeights(const std::vector<float>& memory) {
 	Weights weights;
 
 	// Preallocate memory for the weights matrix to improve performance
 	weights.weightsAsVector.resize(memory.size(), std::vector<float>(memory.size(), 0.0f));
 
 	// Iterate over the rows and columns of the weights matrix
-	for (int i = 0; i < memory.size(); i++) {
-		for (int j = 0; j < memory.size(); j++) {
+	for (size_t i = 0; i < memory.size(); i++) {
+		for (size_t j = 0; j < memory.size(); j++) {
 			// Calculate the element at the i-th row and j-th column of the weights matrix
 			weights.weightsAsVector[i][j] = memory[i] * memory[j];
 		}
 	}
 
-	for (int i = 0; i < weights.weightsAsVector.size() - 1; i++) {
+	for (size_t i = 0; i < weights.weightsAsVector.size() - 1; i++) {
 		weights.weightsAsVector[i][i] = 0;
 	}
 
@@ -25,10 +25,10 @@ Weights NeuralNetwork::convertMemoryToWeights(std::vector<float>& memory) {
 
 
 
-Weights NeuralNetwork::mergeWeights(std::vector< Weights >& all_weights) {
+Weights NeuralNetwork::mergeWeights(const std::vector< Weights >& all_weights) {
 	// Preallocate memory for the merged weights matrix to improve performance
 	Weights mergedWeights;
-	int axiesSize = all_weights[0].weightsAsVector.size();
+    const size_t axiesSize = all_weights[0].weightsAsVector.size();
 	mergedWeights.weightsAsVector.resize(axiesSize, std::vector<float>(axiesSize, 0.0f));
 
 	// Iterate over the rows and columns of the merged weights matrix
@@ -36,7 +36,7 @@ Weights NeuralNetwork::mergeWeights(std::vector< Weights >& all_weights) {
 		for (int j = 0; j < axiesSize; j++) {
 			// Calculate the element at the i-th row and j-th column of the merged weights matrix
 			float weightValue = 0;
-			for (int k = 0; k < all_weights.size(); k++) {
+			for (size_t k = 0; k < all_weights.size(); k++) {
 				weightValue += all_weights[k].weightsAsVector[i][j];
 			}
 			mergedWeights.weightsAsVector[i][j] = weightValue / all_weights.size();
@@ -48,7 +48,8 @@ Weights NeuralNetwork::mergeWeights(std::vector< Weights >& all_weights) {
 
 
 
-void NeuralNetwork::getWeightsAndStates(std::vector<float>& foundWeights, std::vector<float>& foundStates, Neuron& neuronInQuestion) {
+void NeuralNetwork::getWeightsAndStates(std::vector<float>& foundWeights, std::vector<float>& foundStates, Neuron& neuronInQuestion) const
+{
 	// Preallocate memory for the foundWeights and foundStates vectors
 	foundStates.reserve(m_neurons->size());
 	foundWeights = m_weights[neuronInQuestion.id()];
@@ -73,7 +74,8 @@ std::vector<Weights> NeuralNetwork::turnMemoriesToWeights(std::vector<std::vecto
 		allWeights.emplace_back(convertMemoryToWeights(memory));
 	}
 
-	std::cout << "[NeuralNetwork.hpp]: memories turned to weights" << "\n";
+	puts("[NeuralNetwork.hpp]: memories turned to weights");
+
 
 	return allWeights;
 }
@@ -92,7 +94,7 @@ int NeuralNetwork::neuronToUpdate() {
 	}
 
 	// getting a random index
-	int new_idx = m_indexes[m_neuronsIteratedCount];
+    const int new_idx = m_indexes[m_neuronsIteratedCount];
 	m_neuronsIteratedCount++;
 
 	return new_idx;
@@ -155,8 +157,7 @@ void NeuralNetwork::appendRandomMemory(std::vector<std::vector<float>>& allMemor
 	}
 
 	allMemories.emplace_back(memoryToAdd);
-
-	std::cout << "[NeuralNetwork.hpp]: generated Random Memory" << "\n";
+	puts("[NeuralNetwork.hpp]: generated Random Memory");
 }
 
 
@@ -167,19 +168,20 @@ std::vector<Neuron> NeuralNetwork::generateNeurons(int amount, ArrayOfCircles& b
 	neurons.reserve(amount);
 
 	for (int i = 0; i < amount; i++) {
-		CalculatorNeuron calcNeuron(i, randfloat(-1.0f, 1.0f), possibleStates);
+        const CalculatorNeuron calcNeuron(i, randfloat(-1.0f, 1.0f), possibleStates);
 		Neuron neuron(buffer.m_circleArray, calcNeuron, buffer.m_circles[i], colorOff, colorOn);
 
 		neurons.emplace_back(neuron); 
 	}
 
-	std::cout << "[NeuralNetwork.hpp]: generated Neurons" << "\n";
+	puts("[NeuralNetwork.hpp]: generated Neurons");
 
 	return neurons;
 }
 
 
-float NeuralNetwork::queryWeight(int neuron1_id, int neuron2_id) {
+float NeuralNetwork::queryWeight(int neuron1_id, int neuron2_id) const
+{
 	// gets the weight at the two neuron positions
 	return m_weights[neuron1_id][neuron2_id];
 }
@@ -200,12 +202,12 @@ void NeuralNetwork::initMemory(std::vector< std::vector<float>> memories) {
 	m_weights = mergeWeights(weights).weightsAsVector;
 }
 
-void NeuralNetwork::hardSetWeights(std::vector<std::vector<float>> weights) {
+void NeuralNetwork::hardSetWeights(const std::vector<std::vector<float>>& weights) {
 	m_weights = weights;
 }
 
 
-float NeuralNetwork::collapseState(float x) {
+float NeuralNetwork::collapseState(float x) const {
 	// Collapses the given state to a binary value
 	if (x > 0)
 		return 0.2f;
@@ -219,7 +221,8 @@ int NeuralNetwork::getRandomState(sf::Vector2f possibleStates) {
 }
 
 
-void NeuralNetwork::randomiseMemoryStates(sf::VertexArray& circles) {
+void NeuralNetwork::randomiseMemoryStates(sf::VertexArray& circles) const
+{
 	for (Neuron& neuron : *m_neurons) {
 		neuron.setState(circles, randfloat(-1.0f, 1.0f));
 	}

@@ -1,17 +1,17 @@
 #include "Simulation.hpp"
 
 Simulation::Simulation() {
-	ObjectManager<Button> buttonsMain;
+    const ObjectManager<Button> buttonsMain;
 	m_buttons.AddObject("main", buttonsMain);
 
-	ObjectManager<Button> buttonsMemory;
+    const ObjectManager<Button> buttonsMemory;
 	m_buttons.AddObject("memory", buttonsMemory);
 
-	ObjectManager<Button> buttonsBoth;
+    const ObjectManager<Button> buttonsBoth;
 	m_buttons.AddObject("both", buttonsBoth);
 }
 
-void Simulation::initNeuronInfo(Rect neuralNetworkBorder, Rect memoryMakerBorder, Rect memoryManagerBorder) {
+void Simulation::initNeuronInfo(const Rect& neuralNetworkBorder, const Rect& memoryMakerBorder, const Rect& memoryManagerBorder) {
 
 	// assigning variables to class
 	m_neuralNetworkBorder = neuralNetworkBorder;
@@ -30,7 +30,7 @@ void Simulation::initNeuronInfo(Rect neuralNetworkBorder, Rect memoryMakerBorder
 void Simulation::initiliseCircles() {
 	// first we need to construct a bunch of circles
 	m_buffer = ArrayOfCircles(p_neuronAmount, m_neuronRadius, m_neuronShapeSides);
-	std::cout << "[Simulation.hpp]: ArrayOfCircles initilised" << "\n";
+	puts("[Simulation.hpp]: ArrayOfCircles initilised");
 }
 
 
@@ -39,36 +39,36 @@ void Simulation::initiliseNeurons() {
 	m_neurons = NeuralNetwork::generateNeurons(
 		p_neuronAmount, m_buffer, m_neuronColorNegative, m_neuronColorPositive, { -1, 1 });
 
-	std::cout << "[Simulation.hpp]: Neurons initilised" << "\n";
+	puts("[Simulation.hpp]: Neurons initilised");
 }
 
 
 void Simulation::initiliseNeuralNetwork() {
 	// next we create the NeuralNetwork passing in the neurons 
-	m_neuralNetwork = NeuralNetwork();
+	//m_neuralNetwork = NeuralNetwork();
 
 	std::vector<std::vector<float>> memories;
 	NeuralNetwork::appendRandomMemory(memories, p_neuronAmount);
 	m_neuralNetwork.initiliseNetwork(m_neurons, memories);
 
-	std::cout << "[Simulation.hpp]: NeuralNetwork initilised" << "\n";
+	puts("[Simulation.hpp]: NeuralNetwork initilised");
 }
 
 
 void Simulation::initiliseRenderer() {
 	// Finally we pass in the neuralNetwork, the neurons, and the buffer to create the Renderer
-	m_renderer = Renderer();
+	//m_renderer = Renderer();
 	m_renderer.initiliseRenderer(m_neuralNetwork, p_neuronsPerAxies, m_neuronRadius, m_neuralNetworkBorder, m_buffer.m_circleArray, m_neurons);
-	std::cout << "[Simulation.hpp]: Renderer initilised" << "\n";
+	puts("[Simulation.hpp]: Renderer initilised");
 }
 
 void Simulation::initiliseMemoryManager() {
 	m_memoryManager.init(m_memoryManagerBorder, { 0.15f, 0.15f }, { 4, 2 });
-	std::cout << "[Simulation.hpp] MemoryManager initilised:" << "\n";
+	puts("[Simulation.hpp] MemoryManager initilised:");
 }
 
 
 void Simulation::initiliseMemoryMaker() {
 	m_memoryMaker = MemoryMaker(m_memoryMakerBorder, p_neuronsPerAxies, p_neuronsPerAxies);
-	std::cout << "[Simulation.hpp]: MemoryMaker initilised" << "\n";
+	puts("[Simulation.hpp]: MemoryMaker initilised");
 }

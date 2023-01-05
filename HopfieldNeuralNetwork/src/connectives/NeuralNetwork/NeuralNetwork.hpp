@@ -34,24 +34,24 @@ public:
 
 
 private:
-	void getWeightsAndStates(std::vector<float>& foundWeights, std::vector<float>& foundStates, Neuron& neuronInQuestion);
+	void getWeightsAndStates(std::vector<float>& foundWeights, std::vector<float>& foundStates, Neuron& neuronInQuestion) const;
 
-	Weights convertMemoryToWeights(std::vector<float>& memory);
+	Weights convertMemoryToWeights(const std::vector<float>& memory);
 
-	float queryWeight(int neuron1_id, int neuron2_id);
-	float collapseState(float x);
+	float queryWeight(int neuron1_id, int neuron2_id) const;
+	float collapseState(float x) const;
 
 	int neuronToUpdate();
 
 
 public:
 	std::vector<Weights> turnMemoriesToWeights(std::vector<std::vector<float>>& memories);
-	Weights mergeWeights(std::vector< Weights >& all_weights);
-	void hardSetWeights(std::vector<std::vector<float>> weights);
+	Weights mergeWeights(const std::vector< Weights >& all_weights);
+	void hardSetWeights(const std::vector<std::vector<float>>& weights);
 
 	void initiliseNetwork(std::vector<Neuron>& N_neurons, std::vector< std::vector< float> > allMemories);
 	void initMemory(std::vector< std::vector<float>> memories);
-	void randomiseMemoryStates(sf::VertexArray& circles);
+	void randomiseMemoryStates(sf::VertexArray& circles) const;
 	void flipTickSpeed();
 	void updateStates(sf::VertexArray& circles);
 

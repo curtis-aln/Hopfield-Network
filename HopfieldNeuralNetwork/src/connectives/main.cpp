@@ -20,7 +20,7 @@ t3 =
 
 
 
-void init_statistics(float bufferX, float bufferY, sf::Vector2f buttonSize, sf::Font& font, Simulation& simulation, ObjectManager<StatisticsManager>& statistics) {
+void init_statistics(const float bufferX, const float bufferY, sf::Vector2f buttonSize, const sf::Font& font, const Simulation& simulation, ObjectManager<StatisticsManager>& statistics) {
 	StatisticsManager stats;
 	stats.init(font, 20);
 	statistics.AddObject("main", stats);
@@ -30,8 +30,8 @@ void init_statistics(float bufferX, float bufferY, sf::Vector2f buttonSize, sf::
 	statistics.FindObject("both")->addText("MS/F: ", { 80, 245 });
 	statistics.FindObject("both")->addText("Neurons: ", { 80, 270 });
 	statistics.FindObject("both")->addText("Per Axies: ", { 80, 295 });
-	statistics.FindObject("both")->updateStatistic(floatToString((float)simulation.p_neuronAmount), 1);
-	statistics.FindObject("both")->updateStatistic(floatToString((float)simulation.p_neuronsPerAxies), 2);
+	statistics.FindObject("both")->updateStatistic(std::to_string((float)simulation.p_neuronAmount), 1);
+	statistics.FindObject("both")->updateStatistic(std::to_string((float)simulation.p_neuronsPerAxies), 2);
 
 	const float buttonYPos = bufferY + 640;
 
@@ -45,7 +45,7 @@ void init_statistics(float bufferX, float bufferY, sf::Vector2f buttonSize, sf::
 
 
 void init_buttons(float minY, float spacing, sf::Vector2f buttonSize, Simulation& simulation) {
-	const float x_pos = 90;
+	constexpr float x_pos = 90;
 	simulation.addButton("Pause", { x_pos, minY + (spacing * 1), buttonSize.x, buttonSize.y }, "main", true);
 	simulation.addButton("Draw Border", { x_pos, minY + (spacing * 0), buttonSize.x, buttonSize.y }, "main", true);
 
@@ -63,27 +63,24 @@ void init_buttons(float minY, float spacing, sf::Vector2f buttonSize, Simulation
 }
 
 
-
 int main() {
 
 	// constants
-	const unsigned int screenWidth = 1366;
-	const unsigned int screenHeight = 768;
-	const unsigned int FPS = 1060;
+	constexpr unsigned int screenWidth = 1366;
+	constexpr unsigned int screenHeight = 768;
+	constexpr unsigned int FPS_Limit = 60;
+	constexpr bool b_vSync = false;
+	constexpr unsigned int SynapsesShown = 1; // how many synapses are shown (eveny Nth synapse)
 
-	const unsigned int SynapsesShown = 1; // how many synapses are shown (eveny Nth synapse)
-	const unsigned int frameRateUpdateFreq = 10;
-
-	const float bufferX = 70;
-	const float bufferY = 50;
+	constexpr float bufferX = 70;
+	constexpr float bufferY = 50;
 
 	// - - - - - - - - - - - - - variables - - - - - - - - - - - - - //
 	bool neuronWeightDetiriation = false;
-	unsigned int framecount = 0;    // current frame
 
 
 	// graphic design - rectangle everything will be on
-	std::vector<Rect> surfaces = {
+	static const std::vector<Rect> surfaces = {
 		{630, bufferY, screenHeight - (bufferY * 2), screenHeight - (bufferY * 2), { 35, 36, 54 }}, // networkSurface
 		{bufferX, bufferY, 400, 150, { 35, 36, 54 }}, // buttonSurface
 		{bufferX, bufferY + 180, 400, 150, { 35, 36, 54 }}, // statsSurface
@@ -91,20 +88,16 @@ int main() {
 	};
 
 	// borders
-	const float borderSize = surfaces[0].getSize().y - 60;
+	const float borderSize = surfaces.at(0).getSize().y - 60;
 	const Rect neuralNetworkBorder{ 660.0f, bufferY + 30.0f, borderSize, borderSize };
-	const Rect memoryMakerBorder{ 660.0f, bufferY + 30.0f, borderSize, borderSize, { 0, 0, 0, 0 }, { 255, 255, 255 }, 3};
+	const Rect memoryMakerBorder{ 660.0f, bufferY + 30.0f, borderSize, borderSize, { 0, 0, 0, 0 }, { 255, 255, 255 }, 3 };
 	const Rect memoryManagerBorder{ bufferX - 210, bufferY + 2760, 400, 300 };
 
 
-	const sf::Vector2i neuronStates(-1, 1);
-	const sf::Vector2f buttonSize(150, 40);
+	const sf::Vector2i neuronStates{-1, 1};
+	const sf::Vector2f buttonSize{ 150.0f, 40.0f };
 
-
-	// initilising random
-	std::srand(static_cast<unsigned>(time(NULL)));
-
-	const float minButtonPosY = 70;
+	constexpr float minButtonPosY = 70;
 	const float buttonSpacing = buttonSize.y + 10;
 
 
@@ -124,7 +117,14 @@ int main() {
 
 	// creating the window and the fps manager
 	sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "", sf::Style::Titlebar);
-	sf::Clock clock;
+
+	window.setFramerateLimit(FPS_Limit);
+	window.setVerticalSyncEnabled(b_vSync);
+	window.resetGLStates();
+
+	sf::Clock clock = sf::Clock::Clock();
+	sf::Clock fps_display_clock = sf::Clock::Clock();
+
 
 	//sf::Text sliderbuttonText("hi", font, 30);
 	//sliderbuttonText.setFillColor(sf::Color(255, 255, 255));
@@ -134,6 +134,16 @@ int main() {
 
 	// main game loop
 	while (window.isOpen()) {
+
+		const float currentTime = clock.restart().asSeconds();
+		const float fps = 1.0f / (currentTime);
+
+		if (fps_display_clock.getElapsedTime().asSeconds() >= 0.1f) //100ms
+		{
+			statistics.FindObject("both")->updateStatistic(std::to_string(fps), 0);
+			fps_display_clock.restart();
+		}
+
 		// events
 		sf::Event event;
 		sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
@@ -148,7 +158,8 @@ int main() {
 		window.clear({ 15, 15, 31 });
 
 		// drawing the surfaces
-		for (Rect& surface : surfaces)
+
+		for (const Rect& surface : surfaces)
 			surface.draw(window);
 
 		// drawing statistics
@@ -159,19 +170,15 @@ int main() {
 		else
 			statistics.FindObject("Memory")->drawAllText(window);
 		
-		std::string msps = calcFPS(clock);
-		if (framecount % frameRateUpdateFreq == 0) {
-			statistics.FindObject("both")->updateStatistic(msps, 0);
-			framecount = 1;
-		}
-		framecount++;
-
 		// drawing screen buttons
-		simulation.updateAndRender(window);
 
 		//sliderButton.draw(window, font);
 
+		simulation.updateAndRender(window);
+
 		// drawing to screen
 		window.display();
+
 	}
+	return 0;
 }

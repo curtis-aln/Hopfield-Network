@@ -9,7 +9,7 @@ struct Text {
 	std::string std_text{};
 	std::string value{};
 
-	Text(sf::Font& font, std::string text_string = "", unsigned int textSize=10, sf::Vector2f position = {0, 0}) {
+	Text(const sf::Font& font, const std::string& text_string = "", unsigned int textSize=10, sf::Vector2f position = {0, 0}) {
 		sf_text.setStyle(sf::Text::Regular);
 		sf_text.setFillColor(sf::Color(255, 255, 255));
 		sf_text.setPosition(position);
@@ -37,21 +37,21 @@ class StatisticsManager {
 
 
 public:
-	void init(sf::Font& font, unsigned int textSize) {
+	void init(const sf::Font& font, unsigned int textSize) {
 		m_font = font;
 		m_textSize = textSize;
 	}
 
-	static void createFont(sf::Font& font, std::string fontFileLocation) {
+	static void createFont(sf::Font& font, const std::string& fontFileLocation) {
 		if (!font.loadFromFile(fontFileLocation))
-			std::cout << "[ERROR]: failed to load font" << "\n";
+			puts("[ERROR]: failed to load font");
 	}
 
-	void addText(std::string text_string, sf::Vector2f position) {
-		m_statistics.push_back({m_font, text_string, m_textSize, position});
+	void addText(const std::string& text_string, sf::Vector2f position) {
+		m_statistics.emplace_back(m_font, text_string, m_textSize, position);
 	}
 
-	void updateStatistic(std::string value, int index) {
+	void updateStatistic(const std::string& value, const int index) {
 		m_statistics[index].value = value;
 	}
 
