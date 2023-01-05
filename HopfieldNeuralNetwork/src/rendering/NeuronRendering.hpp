@@ -12,10 +12,11 @@
 
 namespace std {
 	template <> struct hash<std::array<sf::Vector2f, 2>> {
-		inline size_t operator()(const std::array<sf::Vector2f, 2>& v) const {
-			std::hash<float> int_hasher;
-			size_t h1 = int_hasher(v[0].x) ^ int_hasher(v[0].y);
-			size_t h2 = int_hasher(v[1].x) ^ int_hasher(v[1].y);
+		inline size_t operator()(const std::array<sf::Vector2f, 2>& v) const noexcept
+        {
+            constexpr std::hash<float> int_hasher;
+            const size_t h1 = int_hasher(v[0].x) ^ int_hasher(v[0].y);
+            const size_t h2 = int_hasher(v[1].x) ^ int_hasher(v[1].y);
 			return h1 + h2;
 		}
 	};
@@ -38,13 +39,11 @@ private:
 
 
 public:
-	Renderer() {
+	Renderer() = default;
 
-	}
-
-	void initiliseRenderer(NeuralNetwork& neuralNetwork, int neuronsPerAxies,
-		float neuronRadius, Rect border, sf::VertexArray& circles,
-		std::vector<Neuron>& neurons) {
+    void initiliseRenderer(NeuralNetwork& neuralNetwork, int neuronsPerAxies,
+                           float neuronRadius, const Rect& border, sf::VertexArray& circles,
+                           std::vector<Neuron>& neurons) {
 
 		// initilising data
 		m_neuralNetwork = &neuralNetwork;
@@ -59,11 +58,13 @@ public:
 	}
 
 
-	void drawSynapses(sf::RenderWindow& window) {
+	void drawSynapses(sf::RenderWindow& window) const
+    {
 		window.draw(m_synapses);
 	}
 
-	void drawBoundingBox(sf::RenderWindow& window) {
+	void drawBoundingBox(sf::RenderWindow& window) const
+    {
 		sf::RectangleShape boundingBox;
 		boundingBox.setFillColor(sf::Color(0, 0, 0, 0));
 		boundingBox.setOutlineColor(sf::Color(0, 0, 200));
@@ -76,19 +77,20 @@ public:
 
 
 private:
-	float calcNeuronSize(float neuronsPerAxies, float neuronSpacing) {
+	float calcNeuronSize(float neuronsPerAxies, float neuronSpacing) const
+    {
 		return (m_border.w / neuronsPerAxies) - neuronSpacing;
 	}
 
-	void initNeurons(float startX, float startY, float neuronSize, sf::VertexArray& circles, std::vector<Neuron>& neurons) {
-
-		float spacing = m_border.w / m_neuronsPerAxies;
+	void initNeurons(float startX, float startY, float neuronSize, sf::VertexArray& circles, std::vector<Neuron>& neurons) const
+    {
+        const float spacing = m_border.w / m_neuronsPerAxies;
 		for (int i = 0; i < m_neuronsPerAxies; i++) {
 			for (int j = 0; j < m_neuronsPerAxies; j++) {
 				float x = startX + (i * spacing);
 				float y = startY + (j * spacing);
 
-				int current = i + j * m_neuronsPerAxies;
+                const int current = i + j * m_neuronsPerAxies;
 				neurons[current].setPosition(circles, { x, y });
 			}
 		}

@@ -5,9 +5,9 @@
 #include <string>
 
 struct Text {
-	sf::Text sf_text{};
-	std::string std_text{};
-	std::string value{};
+	sf::Text sf_text;
+	std::string std_text;
+	std::string value;
 
 	Text(const sf::Font& font, const std::string& text_string = "", unsigned int textSize=10, sf::Vector2f position = {0, 0}) {
 		sf_text.setStyle(sf::Text::Regular);
