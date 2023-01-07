@@ -9,43 +9,40 @@ public:
 	std::vector<unsigned int> m_circleIndexes{};
 
 public:
-	Circle(const std::vector<unsigned int>& circleIndexes) {
+	Circle(std::vector<unsigned int> circleIndexes) {
 		m_circleIndexes = circleIndexes;
 	}
 
-	void move(sf::VertexArray& circles, float deltaX, float deltaY) const
-    {
-		for (const unsigned int& index : m_circleIndexes) {
+	void move(sf::VertexArray& circles, float deltaX, float deltaY) {
+		for (unsigned int& index : m_circleIndexes) {
 			circles[index].position.x += deltaX;
 			circles[index].position.y += deltaY;
 		}
 	}
 
-	sf::Vector2f getCenter(const sf::VertexArray& circles) const
-    {
+	sf::Vector2f getCenter(sf::VertexArray& circles) {
 		float sumsX = 0;
 		float sumsY = 0;
 		float count = 0;
-		for (const unsigned int& index : m_circleIndexes) {
+		for (unsigned int& index : m_circleIndexes) {
 			sumsX += circles[index].position.x;
 			sumsY += circles[index].position.y;
 			count++;
 		}
 
-		return {sumsX / count, sumsY / count};
+		return sf::Vector2f(sumsX / count, sumsY / count);
 	}
 
-	void setPosition(sf::VertexArray& circles, float positionX, float positionY) const
-    {
-		const sf::Vector2f centerPos = getCenter(circles);
-		const float deltaX = positionX - centerPos.x;
-		const float deltaY = positionY - centerPos.y;
+	void setPosition(sf::VertexArray& circles, float positionX, float positionY) {
+		sf::Vector2f centerPos = getCenter(circles);
+		float deltaX = positionX - centerPos.x;
+		float deltaY = positionY - centerPos.y;
 
 		move(circles, deltaX, deltaY);
 	}
 
-	void setColor(sf::VertexArray& circles, const sf::Color& color) {
-		for (const unsigned int& index : m_circleIndexes) {
+	void setColor(sf::VertexArray& circles, sf::Color color) {
+		for (unsigned int& index : m_circleIndexes) {
 			circles[index].color = color;
 		}
 	}
@@ -54,8 +51,8 @@ public:
 
 class ArrayOfCircles {
 public:
-	std::vector<Circle> m_circles;
-	sf::VertexArray m_circleArray;
+	std::vector<Circle> m_circles{};
+	sf::VertexArray m_circleArray{};
 
 	int pointsPerCircle{};
 	float m_size = 10.0f;
@@ -64,6 +61,7 @@ private: // preset variables
 	unsigned int m_circlePoints{};
 	unsigned int m_circleCount{};
 	float m_circleRadius{};
+
 
 public: // constructor and public functions
 	ArrayOfCircles(unsigned int circleCount = 0, float circleRadius = 0, unsigned int circlePoints = 0) {
@@ -77,18 +75,17 @@ public: // constructor and public functions
 		if (circleCount == 0) return;
 
 		// initilising the Circles 
-		puts("[ArrayOfCircles]: createCircleTriangles");
+		std::cout << "[ArrayOfCircles]: createCircleTriangles" << "\n";
 		std::vector<std::vector<sf::Vector2f>> PointsForCircles = createCircleTriangles();
 
-		puts("[ArrayOfCircles]: flattenAndConvertToVertexArray");
+		std::cout << "[ArrayOfCircles]: flattenAndConvertToVertexArray" << "\n";
 		m_circleArray = flattenAndConvertToVertexArray(PointsForCircles);
 
-		puts("[ArrayOfCircles]: convertVertexArrayToCircles");
+		std::cout << "[ArrayOfCircles]: convertVertexArrayToCircles" << "\n";
 		m_circles = convertVertexArrayToCircles(m_circleArray);
 	}
 
-	void drawCircles(sf::RenderWindow& window, const sf::Vector2f& center) const
-    {
+	void drawCircles(sf::RenderWindow& window, sf::Vector2f center) {
 		window.draw(m_circleArray);
 	}
 
@@ -97,11 +94,12 @@ private: // private functions
 	
 	std::vector<std::vector<sf::Vector2f>> createCircleTriangles() {
 		std::vector<std::vector<sf::Vector2f>> pointsAsTriangles;
+		pointsAsTriangles.reserve(m_circleCount);
 
 		std::vector<sf::Vector2f> trianglePoints = pointsToTriangles({ 0, 0 });
 
 		for (unsigned int i = 0; i < m_circleCount; i++) {
-			pointsAsTriangles.push_back(trianglePoints);
+			pointsAsTriangles.emplace_back(trianglePoints);
 		}
 
 		return pointsAsTriangles;
@@ -110,14 +108,15 @@ private: // private functions
 	
 	std::vector<sf::Vector2f> pointsToTriangles(sf::Vector2f positionCenter) {
 		std::vector<sf::Vector2f> triangles;
+		triangles.reserve(m_circlePoints * 3);
 
 		for (int i = 0; i < (int)m_circlePoints; i++) {
 			sf::Vector2f positionA = idxToCoords(i);
 			sf::Vector2f positionB = idxToCoords(i+1);
 			
-			triangles.push_back(positionA + positionCenter);
-			triangles.push_back(positionB + positionCenter);
-			triangles.push_back(positionCenter);
+			triangles.emplace_back(positionA + positionCenter);
+			triangles.emplace_back(positionB + positionCenter);
+			triangles.emplace_back(positionCenter);
 		}
 
 		pointsPerCircle = (int)triangles.size();
@@ -125,27 +124,27 @@ private: // private functions
 	}
 
 	
-	sf::Vector2f idxToCoords(int idx) const
-    {
-		constexpr float pi = 3.141592f;
-		const float x = cos(2 * pi / m_circlePoints * idx) * m_circleRadius;
-		const float y = sin(2 * pi / m_circlePoints * idx) * m_circleRadius;
-		return {x, y};
+	sf::Vector2f idxToCoords(int idx) {
+		float pi = 3.141592f;
+		float x = cos(2 * pi / m_circlePoints * idx) * m_circleRadius;
+		float y = sin(2 * pi / m_circlePoints * idx) * m_circleRadius;
+		return { x, y };
 	}
 
 	
-	std::vector<Circle> convertVertexArrayToCircles(const sf::VertexArray& vertexArray) const
-    {
+	std::vector<Circle> convertVertexArrayToCircles(sf::VertexArray& vertexArray) {
 		std::vector<Circle> circles;
+		circles.reserve(vertexArray.getVertexCount());
 
 		for (int i = 0; i < vertexArray.getVertexCount(); i+= pointsPerCircle) {
 			std::vector<unsigned int> points;
+			points.reserve(pointsPerCircle);
 
 			for (int k = i; k < i + pointsPerCircle; k++) {
-				points.push_back(k);
+				points.emplace_back(k);
 			}
-			Circle circle(points);
-			circles.push_back(circle);
+
+			circles.emplace_back(Circle{points});
 		}
 
 		return circles;
@@ -156,7 +155,7 @@ private: // private functions
 
 		int i = 0;
 		for (std::vector<sf::Vector2f>& circle : trianglePoints) {
-			for (const sf::Vector2f& point : circle) {
+			for (sf::Vector2f& point : circle) {
 				vertexArray[i].position = point;
 				i++;
 			}
